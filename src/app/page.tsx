@@ -147,7 +147,10 @@ export default function LandingPage() {
               <a href="#beneficios" className="text-gray-600 hover:text-amber-600 transition-colors">Beneficios</a>
               <a href="#formatos" className="text-gray-600 hover:text-amber-600 transition-colors">Formatos</a>
               <a href="#registro" className="text-gray-600 hover:text-amber-600 transition-colors">Registro</a>
-              <Button className="bg-amber-500 hover:bg-amber-600 text-white">
+              <Button 
+                className="bg-amber-500 hover:bg-amber-600 text-white"
+                onClick={() => document.getElementById('registro')?.scrollIntoView({ behavior: 'smooth' })}
+              >
                 Obtener Formatos
               </Button>
             </div>
@@ -172,7 +175,13 @@ export default function LandingPage() {
               <a href="#beneficios" className="text-gray-600 py-2">Beneficios</a>
               <a href="#formatos" className="text-gray-600 py-2">Formatos</a>
               <a href="#registro" className="text-gray-600 py-2">Registro</a>
-              <Button className="bg-amber-500 hover:bg-amber-600 text-white w-full">
+              <Button 
+                className="bg-amber-500 hover:bg-amber-600 text-white w-full"
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  document.getElementById('registro')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+              >
                 Obtener Formatos
               </Button>
             </div>
