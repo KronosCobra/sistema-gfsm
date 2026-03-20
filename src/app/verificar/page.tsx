@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useReducer } from 'react';
+import { useEffect, useState, useReducer, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { CheckCircle2, XCircle, Loader2, Download } from 'lucide-react';
@@ -27,7 +27,7 @@ function reducer(state: State, action: Action): State {
   }
 }
 
-export default function VerifyPage() {
+function VerifyContent() {
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
   
@@ -131,5 +131,17 @@ export default function VerifyPage() {
         </div>
       </motion.div>
     </div>
+  );
+}
+
+export default function VerifyPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50 flex items-center justify-center">
+        <Loader2 className="w-12 h-12 text-amber-500 animate-spin" />
+      </div>
+    }>
+      <VerifyContent />
+    </Suspense>
   );
 }

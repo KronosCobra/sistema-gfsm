@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { 
@@ -14,7 +14,8 @@ import {
   Shield,
   Users,
   BarChart3,
-  Clock
+  Clock,
+  Loader2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -41,7 +42,7 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   'Estrategia': BarChart3
 };
 
-export default function DownloadsPage() {
+function DownloadsContent() {
   const searchParams = useSearchParams();
   const subscriberId = searchParams.get('id');
   
@@ -269,5 +270,17 @@ export default function DownloadsPage() {
         </motion.div>
       </main>
     </div>
+  );
+}
+
+export default function DownloadsPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50 flex items-center justify-center">
+        <Loader2 className="w-12 h-12 text-amber-500 animate-spin" />
+      </div>
+    }>
+      <DownloadsContent />
+    </Suspense>
   );
 }
