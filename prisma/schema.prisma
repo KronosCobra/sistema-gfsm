@@ -1,0 +1,87 @@
+// This is your Prisma schema file,
+// GFSM™ - Global Franchise Structure Method
+// Sistema de Captura de Leads para Asesorías
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Modelo para administradores del sistema
+model Admin {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String   // Hashed password
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Modelo principal de suscriptor/lead
+model Subscriber {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  name          String
+  phone         String?
+  businessType  String?  // Tipo de negocio (restaurante, cafetería, etc.)
+  businessSize  String?  // Tamaño (startup, pequeña, mediana)
+  message       String?  // Mensaje o consulta adicional
+  wantsAdvice   Boolean  @default(false) // Interesado en asesoría
+  
+  // Estado de suscripción
+  isVerified    Boolean  @default(false)
+  verifyToken   String?  @unique
+  verifiedAt    DateTime?
+  
+  // Metadatos
+  source        String?  // De dónde vino el lead
+  ipAddress     String?
+  userAgent     String?
+  
+  // Timestamps
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  // Relaciones
+  downloads     Download[]
+}
+
+// Registro de descargas por usuario
+model Download {
+  id             String   @id @default(cuid())
+  subscriberId   String
+  formatCode     String   // F-01, F-02, etc.
+  formatName     String
+  downloadedAt   DateTime @default(now())
+  
+  // Relación
+  subscriber     Subscriber @relation(fields: [subscriberId], references: [id], onDelete: Cascade)
+  
+  @@index([subscriberId])
+  @@index([formatCode])
+}
+
+// Formatos disponibles para descarga
+model Format {
+  id            String   @id @default(cuid())
+  code          String   @unique // F-01, F-02, etc.
+  name          String
+  description   String
+  category      String   // financiero, operativo, control, etc.
+  order         Int      @default(0)
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// Configuración del sistema
+model Setting {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       String
+  updatedAt   DateTime @updatedAt
+}
