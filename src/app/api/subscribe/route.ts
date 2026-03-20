@@ -48,7 +48,12 @@ export async function POST(request: NextRequest) {
         });
 
         // Enviar email de confirmación
-        await sendConfirmationEmail(email, name, verifyToken);
+        console.log('--- Re-enviando verificación ---');
+        const emailSent = await sendConfirmationEmail(email, name, verifyToken);
+
+        if (!emailSent) {
+          throw new Error('No se pudo enviar el email de confirmación (Re-envío)');
+        }
 
         return NextResponse.json({
           success: true,
@@ -87,7 +92,14 @@ export async function POST(request: NextRequest) {
     });
 
     // Enviar email de confirmación
-    await sendConfirmationEmail(email, name, verifyToken);
+    console.log('--- Enviando primera verificación ---');
+    const emailSent = await sendConfirmationEmail(email, name, verifyToken);
+
+    if (!emailSent) {
+      // Si falla el envío, pero el usuario ya se creó en DB, podríamos querer manejarlo
+      // Para debug, vamos a lanzar un error para verlo en el catch
+      throw new Error('No se pudo enviar el email de confirmación inicial');
+    }
 
     return NextResponse.json({
       success: true,
@@ -97,9 +109,12 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Error en suscripción:', error);
+    console.error('❌ Error crítico en suscripción:', error);
     return NextResponse.json(
-      { error: 'Error al procesar la suscripción' },
+      { 
+        error: 'Error al procesar la suscripción', 
+        details: error instanceof Error ? error.message : 'Error desconocido'
+      },
       { status: 500 }
     );
   }
@@ -109,15 +124,20 @@ async function sendConfirmationEmail(email: string, name: string, token: string)
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
   const verifyUrl = `${baseUrl}/verificar?token=${token}`;
   
-  console.log('--- Iniciando envío de email (Directo) ---');
+  console.log('--- Diagnóstico de Envío ---');
+  console.log('Base URL:', baseUrl);
   console.log('Destinatario:', email);
-  console.log('URL de verificación:', verifyUrl);
+  console.log('Tiene API Key:', !!process.env.RESEND_API_KEY);
 
   const result = await sendEmail({
     to: email,
     subject: 'Confirma tu email - Sistema GFSM™',
     html: getConfirmationHtml(name, verifyUrl)
   });
+
+  if (!result.success) {
+    console.error('❌ Fallo detallado de Resend:', result.error);
+  }
 
   return result.success;
 }
