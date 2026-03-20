@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { randomBytes } from 'crypto';
+import { sendEmail, getConfirmationHtml } from '@/lib/email';
 
 export async function POST(request: NextRequest) {
   try {
@@ -105,20 +106,18 @@ export async function POST(request: NextRequest) {
 }
 
 async function sendConfirmationEmail(email: string, name: string, token: string) {
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-    const verifyUrl = `${baseUrl}/verificar?token=${token}`;
-    
-    // Usar el SDK de AI para enviar el email
-    const response = await fetch(`${baseUrl}/api/send-confirmation`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, name, verifyUrl })
-    });
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  const verifyUrl = `${baseUrl}/verificar?token=${token}`;
+  
+  console.log('--- Iniciando envío de email (Directo) ---');
+  console.log('Destinatario:', email);
+  console.log('URL de verificación:', verifyUrl);
 
-    return response.ok;
-  } catch (error) {
-    console.error('Error enviando email:', error);
-    return false;
-  }
+  const result = await sendEmail({
+    to: email,
+    subject: 'Confirma tu email - Sistema GFSM™',
+    html: getConfirmationHtml(name, verifyUrl)
+  });
+
+  return result.success;
 }
