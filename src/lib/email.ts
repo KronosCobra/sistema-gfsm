@@ -1,16 +1,17 @@
 import { Resend } from 'resend';
 
+// Solo si lo llamas desde un Action de React, descomenta la siguiente línea:
+// 'use server';
+
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export async function sendEmail({
-  to,
-  subject,
-  html
-}: {
+interface SendEmailParams {
   to: string;
   subject: string;
   html: string;
-}) {
+}
+
+export async function sendEmail({ to, subject, html }: SendEmailParams) {
   if (!process.env.RESEND_API_KEY) {
     console.error('❌ Error: RESEND_API_KEY no está configurada');
     return { success: false, error: 'API Key missing' };
@@ -18,22 +19,23 @@ export async function sendEmail({
 
   try {
     const { data, error } = await resend.emails.send({
-      from: 'GFSM <onboarding@resend.dev>', // Dominio de prueba
-      to: [to],
+      from: 'GFSM <hola@demo.seguridades.mx>', // Tu dominio verificado
+      to: [to], // Resend exige un array aquí, está perfecto
       subject,
       html
     });
 
     if (error) {
       console.error('❌ Error de Resend:', error);
-      return { success: false, error };
+      // Retornar explícitamente el mensaje de error ayuda a debuggear en el frontend
+      return { success: false, error: error.message }; 
     }
 
     console.log('✅ Email enviado con éxito. ID:', data?.id);
     return { success: true, data };
   } catch (error) {
     console.error('❌ Error inesperado en sendEmail:', error);
-    return { success: false, error };
+    return { success: false, error: 'Error interno del servidor' };
   }
 }
 
