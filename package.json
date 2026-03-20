@@ -5,7 +5,6 @@
   "scripts": {
     "dev": "next dev -p 3000",
     "build": "npx prisma generate && next build && cp -r .next/static .next/standalone/.next/ && cp -r public .next/standalone/",
-    "postinstall": "npx prisma generate",
     "start": "node .next/standalone/server.js",
     "lint": "eslint .",
     "db:push": "prisma db push",
