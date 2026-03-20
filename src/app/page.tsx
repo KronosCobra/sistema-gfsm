@@ -147,11 +147,8 @@ export default function LandingPage() {
               <a href="#beneficios" className="text-gray-600 hover:text-amber-600 transition-colors">Beneficios</a>
               <a href="#formatos" className="text-gray-600 hover:text-amber-600 transition-colors">Formatos</a>
               <a href="#registro" className="text-gray-600 hover:text-amber-600 transition-colors">Registro</a>
-              <Button 
-                className="bg-amber-500 hover:bg-amber-600 text-white"
-                onClick={() => document.getElementById('registro')?.scrollIntoView({ behavior: 'smooth' })}
-              >
-                Obtener Formatos
+              <Button asChild className="bg-amber-500 hover:bg-amber-600 text-white">
+                <a href="#registro">Obtener Formatos</a>
               </Button>
             </div>
 
@@ -175,14 +172,13 @@ export default function LandingPage() {
               <a href="#beneficios" className="text-gray-600 py-2">Beneficios</a>
               <a href="#formatos" className="text-gray-600 py-2">Formatos</a>
               <a href="#registro" className="text-gray-600 py-2">Registro</a>
-              <Button 
-                className="bg-amber-500 hover:bg-amber-600 text-white w-full"
-                onClick={() => {
-                  setIsMenuOpen(false);
-                  document.getElementById('registro')?.scrollIntoView({ behavior: 'smooth' });
-                }}
-              >
-                Obtener Formatos
+              <Button asChild className="bg-amber-500 hover:bg-amber-600 text-white w-full">
+                <a 
+                  href="#registro"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Obtener Formatos
+                </a>
               </Button>
             </div>
           </motion.div>
@@ -228,12 +224,14 @@ export default function LandingPage() {
                 </div>
               </div>
               <Button 
+                asChild
                 size="lg" 
                 className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white text-lg px-8 py-6"
-                onClick={() => document.getElementById('registro')?.scrollIntoView({ behavior: 'smooth' })}
               >
-                Quiero los formatos gratis
-                <ArrowRight className="ml-2 w-5 h-5" />
+                <a href="#registro">
+                  Quiero los formatos gratis
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </a>
               </Button>
             </motion.div>
 
