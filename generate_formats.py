@@ -15,12 +15,21 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfbase.pdfmetrics import registerFontFamily
 import os
 
-# Register fonts
-pdfmetrics.registerFont(TTFont('Times New Roman', '/usr/share/fonts/truetype/english/Times-New-Roman.ttf'))
+# Register fonts (Note: Path may vary on Windows/Linux)
+# On Windows, usually: C:\Windows\Fonts\times.ttf
+font_path = 'Times-New-Roman.ttf' # Assume it's in the same folder or system path
+if not os.path.exists(font_path):
+    font_path = 'times.ttf' # Generic name
+
+# Note: Registering fonts is optional if you use standard ones, 
+# but this script was designed for Times New Roman.
+# pdfmetrics.registerFont(TTFont('Times New Roman', font_path))
 registerFontFamily('Times New Roman', normal='Times New Roman', bold='Times New Roman')
 
-# Output directory
-OUTPUT_DIR = '/home/z/my-project/download/formats'
+# Output directory (Relative to this script)
+OUTPUT_DIR = os.path.join(os.path.dirname(__file__), 'download', 'formats')
+if not os.path.exists(OUTPUT_DIR):
+    os.makedirs(OUTPUT_DIR)
 
 # Standard colors
 HEADER_COLOR = colors.HexColor('#1F4E79')
